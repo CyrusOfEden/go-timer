@@ -18,26 +18,35 @@ func total(c *cli.Context) (t int64) {
 		if err != nil {
 			os.Exit(1)
 		}
-    t = int64(ti)
+		t = int64(ti)
 	} else {
 		t += int64(c.Int("seconds"))
 		t += int64(c.Int("minutes") * 60)
 		t += int64(c.Int("hours") * 3600)
 		t += int64(c.Int("days") * 86400)
 	}
+	if t <= 0 {
+		os.Exit(1)
+	}
 	return
+}
+
+func progressBar(t int64, c *cli.Context) *pb.ProgressBar {
+	bar := pb.New64(t)
+	bar.ShowPercent = false
+  bar.ShowCounters = false
+	bar.SetRefreshRate(500)
+	bar.ShowSpeed = false
+  bar.Format(c.String("format"))
+	bar.Start()
+  return bar
 }
 
 func run(c *cli.Context) {
 	t := total(c)
+  bar := progressBar(t, c)
 
-	bar := pb.New64(t)
-	bar.ShowPercent = false
-	bar.SetRefreshRate(500)
-	bar.ShowSpeed = false
-	bar.Start()
-
-	ticker := time.NewTicker(time.Second)
+  ticker := time.NewTicker(time.Second)
 	go func() {
 		for _ = range ticker.C {
 			bar.Increment()
@@ -74,13 +83,18 @@ func main() {
 		cli.IntFlag{
 			Name:  "seconds",
 			Usage: "Number of seconds",
-			Value: 1,
+			Value: 0,
 		},
 		cli.StringFlag{
 			Name:  "message",
 			Usage: "Message to print when the timer's finished",
 			Value: "Time's up!",
 		},
+    cli.StringFlag{
+      Name: "format",
+      Usage: "Specify the format as a 5-character long string, [start][progress][head][left][finish]",
+      Value: "==>  ",
+    },
 	}
 	app.Action = run
 	app.Run(os.Args)
