@@ -62,6 +62,7 @@ func run(c *cli.Context) {
 
 func main() {
 	app := cli.NewApp()
+  app.Version = "0.1.0"
 	app.Name = "Timer"
 	app.Usage = "A simple timer"
 	app.Flags = []cli.Flag{
