@@ -1,21 +1,30 @@
 package main
 
 import (
-  "fmt"
-  "os"
-  "time"
+	"fmt"
+	"os"
+	"strconv"
+	"time"
 )
 
 import (
-  "github.com/codegangsta/cli"
-  "gopkg.in/cheggaaa/pb.v1"
+	"github.com/codegangsta/cli"
+	"gopkg.in/cheggaaa/pb.v1"
 )
 
 func total(c *cli.Context) (t int64) {
-	t += int64(c.Int("seconds"))
-	t += int64(c.Int("minutes") * 60)
-	t += int64(c.Int("hours") * 3600)
-	t += int64(c.Int("days") * 86400)
+	if c.NArg() == 1 {
+		ti, err := strconv.Atoi(c.Args()[0])
+		if err != nil {
+			os.Exit(1)
+		}
+    t = int64(ti)
+	} else {
+		t += int64(c.Int("seconds"))
+		t += int64(c.Int("minutes") * 60)
+		t += int64(c.Int("hours") * 3600)
+		t += int64(c.Int("days") * 86400)
+	}
 	return
 }
 
@@ -23,7 +32,7 @@ func run(c *cli.Context) {
 	t := total(c)
 
 	bar := pb.New64(t)
-  bar.ShowPercent = false
+	bar.ShowPercent = false
 	bar.SetRefreshRate(500)
 	bar.ShowSpeed = false
 	bar.Start()
