@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"strconv"
 	"time"
 )
@@ -11,6 +12,13 @@ import (
 	"github.com/codegangsta/cli"
 	"gopkg.in/cheggaaa/pb.v1"
 )
+
+func ding() {
+	if runtime.GOOS == "windows" {
+	} else {
+		fmt.Print("\a")
+	}
+}
 
 func total(c *cli.Context) (t int64) {
 	if c.NArg() == 1 {
@@ -34,19 +42,19 @@ func total(c *cli.Context) (t int64) {
 func progressBar(t int64, c *cli.Context) *pb.ProgressBar {
 	bar := pb.New64(t)
 	bar.ShowPercent = false
-  bar.ShowCounters = false
+	bar.ShowCounters = false
 	bar.SetRefreshRate(500)
 	bar.ShowSpeed = false
-  bar.Format(c.String("format"))
+	bar.Format(c.String("format"))
 	bar.Start()
-  return bar
+	return bar
 }
 
 func run(c *cli.Context) {
 	t := total(c)
-  bar := progressBar(t, c)
+	bar := progressBar(t, c)
 
-  ticker := time.NewTicker(time.Second)
+	ticker := time.NewTicker(time.Second)
 	go func() {
 		for _ = range ticker.C {
 			bar.Increment()
@@ -57,12 +65,13 @@ func run(c *cli.Context) {
 	ticker.Stop()
 
 	bar.Finish()
+	ding()
 	fmt.Println(c.String("message"))
 }
 
 func main() {
 	app := cli.NewApp()
-  app.Version = "0.1.0"
+	app.Version = "0.1.0"
 	app.Name = "Timer"
 	app.Usage = "A simple timer"
 	app.Flags = []cli.Flag{
@@ -91,11 +100,11 @@ func main() {
 			Usage: "Message to print when the timer's finished",
 			Value: "Time's up!",
 		},
-    cli.StringFlag{
-      Name: "format",
-      Usage: "Specify the format as a 5-character long string, [start][progress][head][left][finish]",
-      Value: "==>  ",
-    },
+		cli.StringFlag{
+			Name:  "format",
+			Usage: "Specify the format as a 5-character long string, [start][progress][head][left][finish]",
+			Value: "==>  ",
+		},
 	}
 	app.Action = run
 	app.Run(os.Args)
