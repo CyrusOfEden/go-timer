@@ -1,0 +1,23 @@
+{
+	"version": 0,
+	"dependencies": [
+		{
+			"importpath": "github.com/codegangsta/cli",
+			"repository": "https://github.com/codegangsta/cli",
+			"revision": "ff84ca213d003974c6900fdbde23332111d661c6",
+			"branch": "master"
+		},
+		{
+			"importpath": "gopkg.in/cheggaaa/pb.v1",
+			"repository": "https://gopkg.in/cheggaaa/pb.v1",
+			"revision": "226d21d43a305fac52b3a104ef83e721b15275e0",
+			"branch": "master"
+		},
+		{
+			"importpath": "gopkg.in/yaml.v2",
+			"repository": "https://gopkg.in/yaml.v2",
+			"revision": "a83829b6f1293c91addabc89d0571c246397bbf4",
+			"branch": "v2"
+		}
+	]
+}
